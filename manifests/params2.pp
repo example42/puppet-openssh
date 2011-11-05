@@ -76,8 +76,4 @@ class openssh::params {
     default                   => "/var/log/messages",
   }
 
-  $port = "22"
-
-  $protocol = "tcp"
-
 }

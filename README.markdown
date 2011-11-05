@@ -1,6 +1,12 @@
 # Puppet module: openssh
 
-An open work in progress to define a new openssh template for Puppet modules
+This is a Puppet openssh module from the second generation of Example42 Puppet Modules.
+
+Made by Alessandro Franceschi / Lab42 - http://www.example42.com
+
+Released under the terms of Apache 2 License.
+
+Check Modulefile for dependencies.
 
 ## USAGE - Basic management
 * Install openssh with default settings
@@ -30,7 +36,15 @@ An open work in progress to define a new openssh template for Puppet modules
 * Use custom sources for main config file 
 
         class { "openssh":
-          source => [ "puppet:///modules/lab42/openssh/openssh.conf-$hostname" , "puppet:///modules/lab42/openssh/openssh.conf" ], 
+          source => [ "puppet:///modules/lab42/openssh/openssh.conf-${hostname}" , "puppet:///modules/lab42/openssh/openssh.conf" ], 
+        }
+
+
+* Use custom source directory for the whole configuration dir
+
+        class { "openssh":
+          source_dir       => "puppet:///modules/lab42/openssh/conf/",
+          source_dir_purge => false, # Set to true to purge any existing file not present in $source_dir
         }
 
 * Use custom template for main config file 
@@ -58,14 +72,14 @@ An open work in progress to define a new openssh template for Puppet modules
 
 
 ## USAGE - Example42 extensions management 
-* Activate puppi (reccomended, but disabled by default)
+* Activate puppi (recommended, but disabled by default)
   Note that this option requires the usage of Example42 puppi module
 
         class { "openssh": 
           puppi    => true,
         }
 
-* Activate automatic monitoring (reccomended, but disabled by default)
+* Activate automatic monitoring (recommended, but disabled by default)
   This option requires the usage of Example42 monitor and relevant monitor tools modules
 
         class { "openssh":

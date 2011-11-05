@@ -19,6 +19,14 @@
 #   Sets the content of source parameter for main configuration file
 #   If defined, openssh main config file will have the parameter: source => $source
 #
+# [*source_dir*]
+#   If defined, the whole openssh configuration directory content is retrieved recursively from
+#   the specified source (parameter: source => $source_dir , recurse => true)
+#
+# [*source_dir_purge*]
+#   If set to true (default false)  the existing configuration directory is mirrored with the 
+#   content retrieved from source_dir. (source => $source_dir , recurse => true , purge => true) 
+#
 # [*template*]
 #   Sets the path to the template to be used as content for main configuration file
 #   If defined, openssh main config file will have: content => content("$template")
@@ -132,10 +140,12 @@
 class openssh (
   $my_class          = "",
   $source            = "",
+  $source_dir        = "",
+  $source_dir_purge  = false,
   $template          = "",
   $options           = "",
-  $port              = "22",
-  $protocol          = "tcp",
+  $port              = $openssh::params::port,
+  $protocol          = $openssh::params::protocol,
   $absent            = false,
   $disable           = false,
   $disableboot       = false,
@@ -165,7 +175,7 @@ class openssh (
   ) inherits openssh::params {
 
   # This requires puppetlabs-stdlib
-  # validate_bool($absent , $disable , $disableboot, $monitor , $puppi , $firewall , $debug)
+  validate_bool($source_dir_purge , $absent , $disable , $disableboot, $monitor , $puppi , $firewall , $debug)
 
   # Calculations of some variables used in the module
   $manage_package = $openssh::absent ? {
@@ -205,6 +215,7 @@ class openssh (
     }
   }
 
+
   # Managed resources
   package { "openssh":
     name   => "${openssh::package}",
@@ -239,6 +250,17 @@ class openssh (
     },
   }
 
+  # The whole openssh configuration directory can be recursively overriden
+  if $openssh::source_dir {
+    file { "openssh.dir":
+      path    => "${openssh::config_dir}",
+      ensure  => directory,
+      require => Class["openssh::install"],
+      source  => $source_dir,
+      recurse => true,
+      purge   => $source_dir_purge,
+    }
+  }
 
   # Include custom class if $my_class is set
   if $openssh::my_class {
@@ -248,14 +270,15 @@ class openssh (
 
   # Provide puppi data, if enabled ( puppi => true )
   if $openssh::puppi == true { 
+    $puppivars=get_class_args()
     file { "puppi_openssh":
       path    => "${settings::vardir}/puppi/openssh",
       mode    => "0644",
       owner   => "root",
       group   => "root",
       ensure  => "${openssh::manage_file}",
-#      require => Class["puppi"],         
-      content => template("openssh/puppi.erb"),
+      require => Class["puppi"],         
+      content => inline_template("<%= puppivars.to_yaml %>"),
     }
   }
 
