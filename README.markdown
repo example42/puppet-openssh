@@ -79,6 +79,14 @@ Check Modulefile for dependencies.
           puppi    => true,
         }
 
+* Activate puppi and provide a custom puppi_helper template to customize
+  the output of puppi info / log / check commands
+
+        class { "openssh":
+          puppi        => true,
+          puppi_helper => "example42/openssh/puppi_helper.erb", 
+        }
+
 * Activate automatic monitoring (recommended, but disabled by default)
   This option requires the usage of Example42 monitor and relevant monitor tools modules
 

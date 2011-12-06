@@ -80,4 +80,6 @@ class openssh::params {
 
   $protocol = "tcp"
 
+  $puppi_helper = "puppi/helpers/default.erb"
+
 }

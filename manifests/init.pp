@@ -62,6 +62,11 @@
 # [*puppi*]
 #   Set to 'true' to enable creation of module data files that are used by puppi
 #
+# [*puppi_helper*]
+#   Specify the helper to use for puppi commands. The default for this module is specified in params.pp
+#   and is generally a good choice. You can customize the output of puppi commands for this module
+#   using a different puppi helper. Use the define puppi::helper to create a new custom helper
+#
 # [*firewall*]
 #   Set to 'true' to enable firewalling of the services provided by the module
 #
@@ -152,6 +157,7 @@ class openssh (
   $monitor           = false,
   $monitor_tool      = "",
   $puppi             = false,
+  $puppi_helper      = $openssh::params::puppi_helper,
   $firewall          = false,
   $firewall_tool     = "",
   $firewall_src      = "0.0.0.0/0",
@@ -271,6 +277,7 @@ class openssh (
   # Provide puppi data, if enabled ( puppi => true )
   if $openssh::puppi == true { 
     $puppivars=get_class_args()
+
     file { "puppi_openssh":
       path    => "${settings::vardir}/puppi/openssh",
       mode    => "0644",
@@ -280,6 +287,7 @@ class openssh (
       require => Class["puppi"],         
       content => inline_template("<%= puppivars.to_yaml %>"),
     }
+
   }
 
 
