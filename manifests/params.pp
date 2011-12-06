@@ -13,7 +13,7 @@
 #
 class openssh::params {
 
-  ## Application related parameters
+  ### Application related parameters
 
   $package = $operatingsystem ? {
     default => "openssh-server",
@@ -83,8 +83,8 @@ class openssh::params {
   $protocol = "tcp"
 
 
-  ## General variables that affect module's behaviour
-  ## They can be set at top scope level or in a ENC
+  ### General variables that affect module's behaviour
+  # They can be set at top scope level or in a ENC
 
   $my_class = $::openssh_my_class ? {
     ''      => "",                      # Default value
@@ -132,8 +132,8 @@ class openssh::params {
   }
 
 
-  ## General module variables that can have a site default
-  ## or a per-module default. They can be set at top scope level or in a ENC
+  ### General module variables that can have a site or per module default
+  # They can be set at top scope level or in a ENC
 
   $monitor = $::openssh_monitor ? {
     ''      => $::monitor ? {

@@ -24,7 +24,7 @@ This module can be used in 2 ways:
 
 You can even, under some degrees, mix these two patterns.
 
-You can for example set a top scope variable that affect all you parametrized classes:
+You can for example set general top scope variables that affect all your parametrized classes:
 
         $puppi = true
         $monitor = true
@@ -43,10 +43,12 @@ The above example has the same effect of:
         }
 
 Note that if you use the "Set variables and include class" pattern you can define variables only
-at the top level scope of in a ENC (External Node Classifer) like Puppet Dashboard, Puppet Enterprise Console or The Foreman.
+at the top level scope or in a ENC (External Node Classifer) like Puppet Dashboard, Puppet Enterprise Console or The Foreman.
 
-Below you have an overview of the most important module's parameters (you can mix and pile them in a single call).
+Below you have an overview of the most important module's parameters (you can mix and aggregate them).
+
 The examples use parametrized classes, but for all the parameters you can set a $openssh_ top scope variable.
+
 For example, the variable "$openssh_absent" is equivant to the "absent =>" parameter.
 
 ## USAGE - Basic management

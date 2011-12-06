@@ -5,91 +5,99 @@
 #
 # == Parameters
 #
-# Class specific parameters - Define openssh specific behaviour
-#  
-#
-#
 # Standard class parameters - Define the general class behaviour and customizations
 #
 # [*my_class*]
 #   Name of a custom class to autoload to manage module's customizations 
 #   If defined, openssh class will automatically "include $my_class"
+#   Can be defined also by the (top scope) variable $openssh_myclass
 #
 # [*source*]
 #   Sets the content of source parameter for main configuration file
 #   If defined, openssh main config file will have the parameter: source => $source
+#   Can be defined also by the (top scope) variable $openssh_source
 #
 # [*source_dir*]
 #   If defined, the whole openssh configuration directory content is retrieved recursively from
 #   the specified source (parameter: source => $source_dir , recurse => true)
+#   Can be defined also by the (top scope) variable $openssh_source_dir
 #
 # [*source_dir_purge*]
 #   If set to true (default false)  the existing configuration directory is mirrored with the 
 #   content retrieved from source_dir. (source => $source_dir , recurse => true , purge => true) 
+#   Can be defined also by the (top scope) variable $openssh_source_dir_purge
 #
 # [*template*]
 #   Sets the path to the template to be used as content for main configuration file
 #   If defined, openssh main config file will have: content => content("$template")
 #   Note source and template parameters are mutually exclusive: don't use both
+#   Can be defined also by the (top scope) variable $openssh_template
 #
 # [*options*]
 #   An hash of custom options that can be used in templates for arbitrary settings.
+#   Can be defined also by the (top scope) variable $openssh_options
 # 
-# [*port*] 
-#   The listening port, if any, of the service.
-#   This is used by monitor, firewall and puppi (optional) components
-#
-# [*protocol*] 
-#   The protocol used by the the service.
-#   This is used by monitor, firewall and puppi (optional) components
-#
 # [*absent*] 
 #   Set to 'true' to remove package(s) installed by module 
+#   Can be defined also by the (top scope) variable $openssh_absent
 #
 # [*disable*]
 #   Set to 'true' to disable service(s) managed by module
+#   Can be defined also by the (top scope) variable $openssh_disable
 #
 # [*disableboot*]
 #   Set to 'true' to disable service(s) at boot, without checks if it's running
 #   Use this when the service is managed by an external tool, like a cluster software
+#   Can be defined also by the (top scope) variable $openssh_disableboot
 #
 # [*monitor*]
 #   Set to 'true' to enable monitoring of the services provided by the module
+#   Can be defined also by the (top scope) variables $openssh_monitor and $monitor
 #
 # [*monitor_tool*]
 #   Define which monitor tools (ad defined in Example42 monitor module) you want to use for openssh
+#   Can be defined also by the (top scope) variables $openssh_monitor_tool and $monitor_tool
 #
 # [*puppi*]
 #   Set to 'true' to enable creation of module data files that are used by puppi
+#   Can be defined also by the (top scope) variables $openssh_puppi and $puppi
 #
 # [*puppi_helper*]
 #   Specify the helper to use for puppi commands. The default for this module is specified in params.pp
 #   and is generally a good choice. You can customize the output of puppi commands for this module
 #   using a different puppi helper. Use the define puppi::helper to create a new custom helper
+#   Can be defined also by the (top scope) variables $openssh_puppi_helper and $puppi_helper
 #
 # [*firewall*]
 #   Set to 'true' to enable firewalling of the services provided by the module
+#   Can be defined also by the (top scope) variables $openssh_firewall and $firewall
 #
 # [*firewall_tool*]
 #   Define which firewall tool(s) (ad defined in Example42 firewall module) you want to use for openssh
+#   Can be defined also by the (top scope) variables $openssh_firewall_tool and $firewall_tool
 #
 # [*firewall_src*]
 #   Define which source address/net allow for firewalling openssh. Default: 0.0.0.0/0
+#   Can be defined also by the (top scope) variables $openssh_firewall_src and $firewall_src
 #
 # [*firewall_dst*]
 #   Define which destination address/net use for firewalling openssh. Default: $ipaddress
+#   Can be defined also by the (top scope) variables $openssh_firewall_dst and $firewall_dst
 #
 # [*debug*]
 #   Set to 'true' to enable modules debugging
+#   Can be defined also by the (top scope) variables $openssh_debug and $debug
 #
 # [*audit_only*]
 #   Set to 'true' if you don't intend to override existing configuration files and want to audit the
 #   difference between existing files and the ones that Puppet would provide
+#   Can be defined also by the (top scope) variables $openssh_audit_only and $audit_only
 # 
 # Default class params - As defined in openssh::params.
 # Note that these variables are mostly defined and used in the module itself, overriding the default
 # values might not affected all the involved components (ie: packages layout)
 # Set and override them only if you know what you're doing.
+# Note also that you can't override/set them via top scope variables.
 #
 # [*package*]
 #   The name of openssh package 
@@ -136,12 +144,21 @@
 # [*log_file*]
 #   Log file(s). Used by puppi
 #
+# [*port*]
+#   The listening port, if any, of the service.
+#   This is used by monitor, firewall and puppi (optional) components
+#
+# [*protocol*]
+#   The protocol used by the the service.
+#   This is used by monitor, firewall and puppi (optional) components
+#
 #
 # == Examples
 # 
 # You can use this class in 2 ways:
 # - Set variables (at top scope level on in a ENC) and "include openssh"
 # - Call openssh as a parametrized class
+#
 # See README for details.
 #
 #
@@ -155,8 +172,6 @@ class openssh (
   $source_dir_purge  = $openssh::params::source_dir_purge,
   $template          = $openssh::params::template,
   $options           = $openssh::params::options,
-  $port              = $openssh::params::port,
-  $protocol          = $openssh::params::protocol,
   $absent            = $openssh::params::absent,
   $disable           = $openssh::params::disable,
   $disableboot       = $openssh::params::disableboot,
@@ -184,12 +199,14 @@ class openssh (
   $pid_file          = $openssh::params::pid_file, 
   $data_dir          = $openssh::params::data_dir, 
   $log_dir           = $openssh::params::log_dir, 
-  $log_file          = $openssh::params::log_file 
+  $log_file          = $openssh::params::log_file, 
+  $port              = $openssh::params::port,
+  $protocol          = $openssh::params::protocol
   ) inherits openssh::params {
 
   validate_bool($source_dir_purge , $absent , $disable , $disableboot, $monitor , $puppi , $firewall , $debug, $audit_only)
 
-  # Definition of some variables used in the module
+  ### Definition of some variables used in the module
   $manage_package = $openssh::absent ? {
     true  => "absent",
     false => "present",
@@ -238,7 +255,7 @@ class openssh (
   }
 
 
-  # Managed resources
+  ### Managed resources
   package { "openssh":
     name   => "${openssh::package}",
     ensure => "${openssh::manage_package}",
@@ -289,13 +306,13 @@ class openssh (
   }
 
 
-  # Include custom class if $my_class is set
+  ### Include custom class if $my_class is set
   if $openssh::my_class {
     include $openssh::my_class
   } 
 
 
-  # Provide puppi data, if enabled ( puppi => true )
+  ### Provide puppi data, if enabled ( puppi => true )
   if $openssh::puppi == true { 
     $puppivars=get_class_args()
     file { "puppi_openssh":
@@ -310,7 +327,7 @@ class openssh (
   }
 
 
-  # Service monitoring, if enabled ( monitor => true )
+  ### Service monitoring, if enabled ( monitor => true )
   if $openssh::monitor == true { 
     monitor::port { "openssh_${openssh::protocol}_${openssh::port}": 
       protocol => "${openssh::protocol}",
@@ -329,7 +346,7 @@ class openssh (
   }
 
 
-  # Firewall management, if enabled ( firewall => true )
+  ### Firewall management, if enabled ( firewall => true )
   if $openssh::firewall == true {  
     firewall { "openssh_${openssh::protocol}_${openssh::port}":
       source      => "${openssh::firewall_source}",
@@ -343,7 +360,7 @@ class openssh (
   }
 
 
-  # Include debug class is debugging is enabled 
+  ### Debugging, if enabled ( debug => true )
   if $openssh::debug == true {
     file { "debug_openssh":
       path    => "${settings::vardir}/debug-openssh",
