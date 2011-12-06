@@ -58,6 +58,10 @@
 #   Define which monitor tools (ad defined in Example42 monitor module) you want to use for openssh
 #   Can be defined also by the (top scope) variables $openssh_monitor_tool and $monitor_tool
 #
+# [*monitor_target*]
+#   The Ip address or hostname to use as a target for monitoring tools. Default is the fact $ip_address
+#   Can be defined also by the (top scope) variables $openssh_monitor_target and $monitor_target
+#
 # [*puppi*]
 #   Set to 'true' to enable creation of module data files that are used by puppi
 #   Can be defined also by the (top scope) variables $openssh_puppi and $puppi
@@ -177,6 +181,7 @@ class openssh (
   $disableboot       = $openssh::params::disableboot,
   $monitor           = $openssh::params::monitor,
   $monitor_tool      = $openssh::params::monitor_tool,
+  $monitor_target    = $openssh::params::monitor_target,
   $puppi             = $openssh::params::puppi,
   $puppi_helper      = $openssh::params::puppi_helper,
   $firewall          = $openssh::params::firewall,
@@ -332,7 +337,7 @@ class openssh (
     monitor::port { "openssh_${openssh::protocol}_${openssh::port}": 
       protocol => "${openssh::protocol}",
       port     => "${openssh::port}",
-      target   => "${openssh::params::monitor_target_real}",
+      target   => "${openssh::params::monitor_target}",
       tool     => "${openssh::monitor_tool}",
       enable   => $openssh::manage_monitor,
     }

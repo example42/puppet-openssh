@@ -29,7 +29,7 @@ class openssh::params {
   }
 
   $process = $operatingsystem ? {
-    default => "openssh",
+    default => "sshd",
   }
 
   $process_args = $operatingsystem ? {
@@ -45,7 +45,7 @@ class openssh::params {
   } 
 
   $config_file_mode = $operatingsystem ? { 
-    default => "0600",
+    default => "0644",
   }
 
   $config_file_owner = $operatingsystem ? {
@@ -149,6 +149,14 @@ class openssh::params {
       default => $::monitor_tool,
     },
     default => $::openssh_monitor_tool,
+  }
+
+  $monitor_target = $::openssh_monitor_target ? {
+    ''      => $::monitor_target ? {
+      ''      => "$ipaddress",         # Default value
+      default => $::monitor_target,
+    },
+    default => $::openssh_monitor_target,
   }
 
   $firewall = $::openssh_firewall ? {
