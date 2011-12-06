@@ -8,6 +8,47 @@ Released under the terms of Apache 2 License.
 
 Check Modulefile for dependencies.
 
+## GENERAL USAGE
+This module can be used in 2 ways:
+
+* With the old style "Set variables and include class" pattern:
+
+        $openssh_template = "example42/openssh/openssh.conf.erb"
+        include openssh
+
+* As a parametrized class:
+
+        class { "openssh":
+          template => "example42/openssh/openssh.conf.erb",
+        }
+
+You can even, under some degrees, mix these two patterns.
+
+You can for example set a top scope variable that affect all you parametrized classes:
+
+        $puppi = true
+        $monitor = true
+        $monitor_tool = [ "nagios" , "munin" , "puppi" ]
+        class { "openssh":
+          template => "example42/openssh/openssh.conf.erb",
+        }
+        
+The above example has the same effect of:
+
+        class { "openssh":
+          template => "example42/openssh/openssh.conf.erb",
+          puppi        => true,
+          monitor      => true,
+          monitor_tool => [ "nagios" , "munin" , "puppi" ],
+        }
+
+Note that if you use the "Set variables and include class" pattern you can define variables only
+at the top level scope of in a ENC (External Node Classifer) like Puppet Dashboard, Puppet Enterprise Console or The Foreman.
+
+Below you have an overview of the most important module's parameters (you can mix and pile them in a single call).
+The examples use parametrized classes, but for all the parameters you can set a $openssh_ top scope variable.
+For example, the variable "$openssh_absent" is equivant to the "absent =>" parameter.
+
 ## USAGE - Basic management
 * Install openssh with default settings
 
@@ -29,6 +70,12 @@ Check Modulefile for dependencies.
 
         class { "openssh":
           absent => true
+        }
+
+* Enable auditing without without making changes on existing openssh configuration files
+
+        class { "openssh":
+          audit_only => true
         }
 
 
@@ -79,12 +126,12 @@ Check Modulefile for dependencies.
           puppi    => true,
         }
 
-* Activate puppi and provide a custom puppi_helper template to customize
-  the output of puppi info / log / check commands
+* Activate puppi and use a custom puppi_helper template (to be provided separately with
+  a puppi::helper define ) to customize the output of puppi commands 
 
         class { "openssh":
           puppi        => true,
-          puppi_helper => "example42/openssh/puppi_helper.erb", 
+          puppi_helper => "myhelper", 
         }
 
 * Activate automatic monitoring (recommended, but disabled by default)
