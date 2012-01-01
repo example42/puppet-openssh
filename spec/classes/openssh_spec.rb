@@ -24,6 +24,15 @@ describe 'openssh' do
     it { should contain_file('openssh.conf').with_ensure('absent') }
   end
 
+  describe 'Customizations' do
+    let(:params) { {:template => "test" } }
+
+    it 'should generate monitor defines' do
+      content = catalogue.resource('file', 'openssh.conf').send(:parameters)[:content]
+      content.should == "test"
+    end
+  end
+
   describe 'Puppi Integration' do
     let(:params) { {:puppi => true, :puppi_helper => "myhelper"} }
 
@@ -34,6 +43,16 @@ describe 'openssh' do
       (content.split("\n") & expected_lines).should == expected_lines
     end
   end
+
+  describe 'Monitoring Integration' do
+    let(:params) { {:monitor => true, :monitor_tool => "puppi" } }
+
+    it 'should generate monitor defines' do
+      content = catalogue.resource('monitor::process', 'openssh_process').send(:parameters)[:tool]
+      content.should == "puppi"
+    end
+  end
+
 
 end
 
