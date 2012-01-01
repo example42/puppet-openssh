@@ -78,9 +78,15 @@ class openssh::params {
     default                   => "/var/log/messages",
   }
 
-  $port = "22"
+  $port = $::openssh_port ? {
+    ''      => "22",                    # Default value
+    default => $::openssh_port,
+  }
 
-  $protocol = "tcp"
+  $protocol = $::openssh_protocol ? {
+    ''      => "tcp",                   # Default value
+    default => $::openssh_protocol,
+  }
 
 
   ### General variables that affect module's behaviour

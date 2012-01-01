@@ -151,10 +151,13 @@
 # [*port*]
 #   The listening port, if any, of the service.
 #   This is used by monitor, firewall and puppi (optional) components
+#   Note: This doesn't necessarily affect the service configuration file
+#   Can be defined also by the (top scope) variable $openssh_port
 #
 # [*protocol*]
 #   The protocol used by the the service.
 #   This is used by monitor, firewall and puppi (optional) components
+#   Can be defined also by the (top scope) variable $openssh_protocol
 #
 #
 # == Examples
