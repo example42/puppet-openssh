@@ -116,7 +116,7 @@ For example, the variable "$openssh_absent" is equivant to the "absent =>" param
 * Automaticallly include a custom subclass
 
         class { "openssh:"
-          my_class => 'lab42::openssh',
+          my_class => 'openssh::example42',
         }
 
 
