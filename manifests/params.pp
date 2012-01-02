@@ -1,90 +1,91 @@
 # Class: openssh::params
 #
 # This class defines default parameters used by the main module class openssh
-# Operating Systems differences in names and paths are addressed here 
+# Operating Systems differences in names and paths are addressed here
 #
 # == Variables
-# 
+#
 # Refer to openssh class for the variables defined here.
 #
-# == Usage 
-# 
-# This class is not intended to be used directly. It may be imported or inherited by other classes
+# == Usage
+#
+# This class is not intended to be used directly.
+# It may be imported or inherited by other classes
 #
 class openssh::params {
 
   ### Application related parameters
 
-  $package = $operatingsystem ? {
-    default => "openssh-server",
+  $package = $::operatingsystem ? {
+    default => 'openssh-server',
   }
 
-  $service = $operatingsystem ? {
-    /(?i:Debian|Ubuntu|Mint)/ => "ssh",
-    default                   => "sshd",
+  $service = $::operatingsystem ? {
+    /(?i:Debian|Ubuntu|Mint)/ => 'ssh',
+    default                   => 'sshd',
   }
 
-  $service_status = $operatingsystem ? {
+  $service_status = $::operatingsystem ? {
     default => true,
   }
 
-  $process = $operatingsystem ? {
-    default => "sshd",
+  $process = $::operatingsystem ? {
+    default => 'sshd',
   }
 
-  $process_args = $operatingsystem ? {
-    default => "",
+  $process_args = $::operatingsystem ? {
+    default => '',
   }
 
-  $config_dir = $operatingsystem ? {
-    default => "/etc/ssh",
+  $config_dir = $::operatingsystem ? {
+    default => '/etc/ssh',
   }
 
-  $config_file = $operatingsystem ? {
-    default => "/etc/ssh/sshd_config",
-  } 
-
-  $config_file_mode = $operatingsystem ? { 
-    default => "0644",
+  $config_file = $::operatingsystem ? {
+    default => '/etc/ssh/sshd_config',
   }
 
-  $config_file_owner = $operatingsystem ? {
-    default => "root",
+  $config_file_mode = $::operatingsystem ? {
+    default => '0644',
   }
 
-  $config_file_group = $operatingsystem ? {
-    default => "root",
+  $config_file_owner = $::operatingsystem ? {
+    default => 'root',
   }
 
-  $config_file_init = $operatingsystem ? {
-    /(?i:Debian|Ubuntu|Mint)/ => "/etc/default/ssh",
-    default                   => "/etc/sysconfig/sshd",
-  }
-  
-  $pid_file = $operatingsystem ? {
-    default => "/var/run/sshd.pid",
+  $config_file_group = $::operatingsystem ? {
+    default => 'root',
   }
 
-  $data_dir = $operatingsystem ? {
-    default => "/etc/ssh",
+  $config_file_init = $::operatingsystem ? {
+    /(?i:Debian|Ubuntu|Mint)/ => '/etc/default/ssh',
+    default                   => '/etc/sysconfig/sshd',
   }
 
-  $log_dir = $operatingsystem ? {
-    default => "/var/log",
+  $pid_file = $::operatingsystem ? {
+    default => '/var/run/sshd.pid',
   }
 
-  $log_file = $operatingsystem ? {
-    /(?i:Debian|Ubuntu|Mint)/ => "/var/log/syslog",
-    default                   => "/var/log/messages",
+  $data_dir = $::operatingsystem ? {
+    default => '/etc/ssh',
+  }
+
+  $log_dir = $::operatingsystem ? {
+    default => '/var/log',
+  }
+
+  $log_file = $::operatingsystem ? {
+    /(?i:Debian|Ubuntu|Mint)/ => '/var/log/syslog',
+    default                   => '/var/log/messages',
   }
 
   $port = $::openssh_port ? {
-    ''      => "22",                    # Default value
+    ''      => '22',                    # Default value
     default => $::openssh_port,
   }
 
   $protocol = $::openssh_protocol ? {
-    ''      => "tcp",                   # Default value
+    ''      => 'tcp',                   # Default value
     default => $::openssh_protocol,
   }
 
@@ -93,17 +94,17 @@ class openssh::params {
   # They can be set at top scope level or in a ENC
 
   $my_class = $::openssh_my_class ? {
-    ''      => "",                      # Default value
+    ''      => '',                      # Default value
     default => $::openssh_my_class,
   }
 
   $source = $::openssh_source ? {
-    ''      => "",                      # Default value
+    ''      => '',                      # Default value
     default => $::openssh_source,
   }
 
   $source_dir = $::openssh_source_dir ? {
-    ''      => "",                      # Default value
+    ''      => '',                      # Default value
     default => $::openssh_source_dir,
   }
 
@@ -113,12 +114,12 @@ class openssh::params {
   }
 
   $template = $::openssh_template ? {
-    ''      => "",                      # Default value
+    ''      => '',                      # Default value
     default => $::openssh_template,
   }
 
   $options = $::openssh_options ? {
-    ''      => "",                      # Default value
+    ''      => '',                      # Default value
     default => $::openssh_options,
   }
 
@@ -130,7 +131,7 @@ class openssh::params {
   $disable = $::openssh_disable ? {
     ''      => false,                   # Default value
     default => $::openssh_disable,
-  } 
+  }
 
   $disableboot = $::openssh_disableboot ? {
     ''      => false,                   # Default value
@@ -151,7 +152,7 @@ class openssh::params {
 
   $monitor_tool = $::openssh_monitor_tool ? {
     ''      => $::monitor_tool ? {
-      ''      => "",                   # Default value
+      ''      => '',                   # Default value
       default => $::monitor_tool,
     },
     default => $::openssh_monitor_tool,
@@ -159,7 +160,7 @@ class openssh::params {
 
   $monitor_target = $::openssh_monitor_target ? {
     ''      => $::monitor_target ? {
-      ''      => "$ipaddress",         # Default value
+      ''      => $::ipaddress,         # Default value
       default => $::monitor_target,
     },
     default => $::openssh_monitor_target,
@@ -175,7 +176,7 @@ class openssh::params {
 
   $firewall_tool = $::openssh_firewall_tool ? {
     ''      => $::firewall_tool ? {
-      ''      => "",                   # Default value
+      ''      => '',                   # Default value
       default => $::firewall_tool,
     },
     default => $::openssh_firewall_tool,
@@ -183,7 +184,7 @@ class openssh::params {
 
   $firewall_src = $::openssh_firewall_src ? {
     ''      => $::firewall_src ? {
-      ''      => "0.0.0.0/0",          # Default value
+      ''      => '0.0.0.0/0',          # Default value
       default => $::firewall_src,
     },
     default => $::openssh_firewall_src,
@@ -191,7 +192,7 @@ class openssh::params {
 
   $firewall_dst = $::openssh_firewall_dst ? {
     ''      => $::firewall_dst ? {
-      ''      => $ip_address,          # Default value
+      ''      => $::ip_address,        # Default value
       default => $::firewall_dst,
     },
     default => $::openssh_firewall_dst,
@@ -203,11 +204,11 @@ class openssh::params {
       default => $::puppi,
     },
     default => $::openssh_puppi,
-  }  
+  }
 
   $puppi_helper = $::openssh_puppi_helper ? {
     ''      => $::puppi_helper ? {
-      ''      => "standard",           # Default value
+      ''      => 'standard',           # Default value
       default => $::puppi_helper,
     },
     default => $::openssh_puppi_helper,
