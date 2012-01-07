@@ -270,12 +270,17 @@ class openssh (
     default => 'present',
   }
 
-  $manage_monitor = $openssh::absent ? {
-    true    => false ,
-    default => $openssh::disable ? {
-      true    => false,
-      default => true,
-    }
+  # If $openssh::disable == true we dont check openssh on the local system
+  if $openssh::absent == true or $openssh::disable == true or $openssh::disableboot == true {
+    $manage_monitor = false
+  } else {
+    $manage_monitor = true
+  }
+
+  if $openssh::absent == true or $openssh::disable == true {
+    $manage_firewall = false
+  } else {
+    $manage_firewall = true
   }
 
   $manage_audit = $openssh::audit_only ? {
@@ -393,6 +398,7 @@ class openssh (
       action      => 'allow',
       direction   => 'input',
       tool        => $openssh::firewall_tool,
+      enable      => $openssh::manage_firewall,
     }
   }
 
