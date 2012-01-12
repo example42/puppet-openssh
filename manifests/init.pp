@@ -230,65 +230,64 @@ class openssh (
   $protocol          = $openssh::params::protocol
   ) inherits openssh::params {
 
-  validate_bool(  $source_dir_purge ,
-                  $absent ,
-                  $disable ,
-                  $disableboot ,
-                  $monitor ,
-                  $puppi ,
-                  $firewall ,
-                  $debug ,
-                  $audit_only )
+  $bool_source_dir_purge=any2bool($source_dir_purge)
+  $bool_absent=any2bool($absent)
+  $bool_disable=any2bool($disable)
+  $bool_disableboot=any2bool($disableboot)
+  $bool_monitor=any2bool($monitor)
+  $bool_puppi=any2bool($puppi)
+  $bool_firewall=any2bool($firewall)
+  $bool_debug=any2bool($debug)
+  $bool_audit_only=any2bool($audit_only)
 
   ### Definition of some variables used in the module
-  $manage_package = $openssh::absent ? {
+  $manage_package = $openssh::bool_absent ? {
     true  => 'absent',
     false => 'present',
   }
 
-  $manage_service_enable = $openssh::disableboot ? {
+  $manage_service_enable = $openssh::bool_disableboot ? {
     true    => false,
-    default => $openssh::disable ? {
+    default => $openssh::bool_disable ? {
       true    => false,
-      default => $openssh::absent ? {
+      default => $openssh::bool_absent ? {
         true  => false,
         false => true,
       },
     },
   }
 
-  $manage_service_ensure = $openssh::disable ? {
+  $manage_service_ensure = $openssh::bool_disable ? {
     true    => 'stopped',
-    default =>  $openssh::absent ? {
+    default =>  $openssh::bool_absent ? {
       true    => 'stopped',
       default => 'running',
     },
   }
 
-  $manage_file = $openssh::absent ? {
+  $manage_file = $openssh::bool_absent ? {
     true    => 'absent',
     default => 'present',
   }
 
-  # If $openssh::disable == true we dont check openssh on the local system
-  if $openssh::absent == true or $openssh::disable == true or $openssh::disableboot == true {
+  if $openssh::bool_absent == true or $openssh::bool_disable == true or $openssh::bool_disableboot == true {
     $manage_monitor = false
   } else {
     $manage_monitor = true
   }
 
-  if $openssh::absent == true or $openssh::disable == true {
+  if $openssh::bool_absent == true or $openssh::bool_disable == true {
     $manage_firewall = false
   } else {
     $manage_firewall = true
   }
 
-  $manage_audit = $openssh::audit_only ? {
+  $manage_audit = $openssh::bool_audit_only ? {
     true  => 'all',
     false => undef,
   }
 
-  $manage_file_replace = $openssh::audit_only ? {
+  $manage_file_replace = $openssh::bool_audit_only ? {
     true  => false,
     false => true,
   }
@@ -355,7 +354,7 @@ class openssh (
 
 
   ### Provide puppi data, if enabled ( puppi => true )
-  if $openssh::puppi == true {
+  if $openssh::bool_puppi == true {
     $puppivars=get_class_args()
     file { 'puppi_openssh':
       ensure  => $openssh::manage_file,
@@ -370,7 +369,7 @@ class openssh (
 
 
   ### Service monitoring, if enabled ( monitor => true )
-  if $openssh::monitor == true {
+  if $openssh::bool_monitor == true {
     monitor::port { "openssh_${openssh::protocol}_${openssh::port}":
       protocol => $openssh::protocol,
       port     => $openssh::port,
@@ -389,7 +388,7 @@ class openssh (
 
 
   ### Firewall management, if enabled ( firewall => true )
-  if $openssh::firewall == true {
+  if $openssh::bool_firewall == true {
     firewall { "openssh_${openssh::protocol}_${openssh::port}":
       source      => $openssh::firewall_source,
       destination => $openssh::firewall_destination,
@@ -404,7 +403,7 @@ class openssh (
 
 
   ### Debugging, if enabled ( debug => true )
-  if $openssh::debug == true {
+  if $openssh::bool_debug == true {
     file { 'debug_openssh':
       ensure  => $openssh::manage_file,
       path    => "${settings::vardir}/debug-openssh",
