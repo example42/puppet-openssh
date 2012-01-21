@@ -1,4 +1,4 @@
-# Class: openssh
+# = Class: openssh
 #
 # This is the main openssh class
 #
