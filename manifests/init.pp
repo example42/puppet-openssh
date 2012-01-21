@@ -19,7 +19,7 @@
 #   Can be defined also by the (top scope) variable $openssh_source
 #
 # [*source_dir*]
-#   If defined, the whole openssh configuration direrctory content is retrieved
+#   If defined, the whole openssh configuration directory content is retrieved
 #   recursively from the specified source
 #   (source => $source_dir , recurse => true)
 #   Can be defined also by the (top scope) variable $openssh_source_dir
