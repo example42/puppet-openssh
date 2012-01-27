@@ -355,15 +355,11 @@ class openssh (
 
   ### Provide puppi data, if enabled ( puppi => true )
   if $openssh::bool_puppi == true {
-    $puppivars=get_class_args()
-    file { 'puppi_openssh':
-      ensure  => $openssh::manage_file,
-      path    => "${settings::vardir}/puppi/openssh",
-      mode    => '0644',
-      owner   => 'root',
-      group   => 'root',
-      require => Class['puppi'],
-      content => inline_template('<%= puppivars.to_yaml %>'),
+    $classvars=get_class_args()
+    puppi::ze { 'openssh':
+      ensure    => $openssh::manage_file,
+      variables => $classvars,
+      helper    => $openssh::puppi_helper,
     }
   }
 
