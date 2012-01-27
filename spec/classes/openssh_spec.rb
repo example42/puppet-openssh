@@ -124,11 +124,9 @@ describe 'openssh' do
   describe 'Test Puppi Integration' do
     let(:params) { {:puppi => true, :puppi_helper => "myhelper"} }
 
-    it { should contain_file('puppi_openssh').with_ensure('present') }
-    it 'should generate a valid puppi data file' do
-      content = catalogue.resource('file', 'puppi_openssh').send(:parameters)[:content]
-      expected_lines = [ '  puppi_helper: myhelper' , '  puppi: true' ]
-      (content.split("\n") & expected_lines).should == expected_lines
+    it 'should generate a puppi::ze define' do
+      content = catalogue.resource('puppi::ze', 'openssh').send(:parameters)[:helper]
+      content.should == "myhelper"
     end
   end
 
@@ -162,7 +160,8 @@ describe 'openssh' do
       content.should == "iptables"
     end
     it 'should generate puppi resources ' do 
-      should contain_file('puppi_openssh').with_ensure('present') 
+      content = catalogue.resource('puppi::ze', 'openssh').send(:parameters)[:ensure]
+      content.should == "present"
     end
   end
 end
