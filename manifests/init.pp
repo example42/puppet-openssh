@@ -66,7 +66,7 @@
 #
 # [*monitor_target*]
 #   The Ip address or hostname to use as a target for monitoring tools.
-#   Default is the fact $ip_address
+#   Default is the fact $ipaddress
 #   Can be defined also by the (top scope) variables $openssh_monitor_target
 #   and $monitor_target
 #
@@ -133,8 +133,11 @@
 #   The name of openssh process
 #
 # [*process_args*]
-#   The name of openssh arguments.
+#   The name of openssh arguments. Used by puppi and monitor.
 #   Used only in case the openssh process name is generic (java, ruby...)
+#
+# [*process_user*]
+#   The name of the user openssh runs with. Used by puppi and monitor.
 #
 # [*config_dir*]
 #   Main configuration directory. Used by puppi
@@ -191,43 +194,44 @@
 #   Alessandro Franceschi <al@lab42.it/>
 #
 class openssh (
-  $my_class          = $openssh::params::my_class,
-  $source            = $openssh::params::source,
-  $source_dir        = $openssh::params::source_dir,
-  $source_dir_purge  = $openssh::params::source_dir_purge,
-  $template          = $openssh::params::template,
-  $options           = $openssh::params::options,
-  $absent            = $openssh::params::absent,
-  $disable           = $openssh::params::disable,
-  $disableboot       = $openssh::params::disableboot,
-  $monitor           = $openssh::params::monitor,
-  $monitor_tool      = $openssh::params::monitor_tool,
-  $monitor_target    = $openssh::params::monitor_target,
-  $puppi             = $openssh::params::puppi,
-  $puppi_helper      = $openssh::params::puppi_helper,
-  $firewall          = $openssh::params::firewall,
-  $firewall_tool     = $openssh::params::firewall_tool,
-  $firewall_src      = $openssh::params::firewall_src,
-  $firewall_dst      = $openssh::params::firewall_dst,
-  $debug             = $openssh::params::debug,
-  $audit_only        = $openssh::params::audit_only,
-  $package           = $openssh::params::package,
-  $service           = $openssh::params::service,
-  $service_status    = $openssh::params::service_status,
-  $process           = $openssh::params::process,
-  $process_args      = $openssh::params::process_args,
-  $config_dir        = $openssh::params::config_dir,
-  $config_file       = $openssh::params::config_file,
-  $config_file_mode  = $openssh::params::config_file_mode,
-  $config_file_owner = $openssh::params::config_file_owner,
-  $config_file_group = $openssh::params::config_file_group,
-  $config_file_init  = $openssh::params::config_file_init,
-  $pid_file          = $openssh::params::pid_file,
-  $data_dir          = $openssh::params::data_dir,
-  $log_dir           = $openssh::params::log_dir,
-  $log_file          = $openssh::params::log_file,
-  $port              = $openssh::params::port,
-  $protocol          = $openssh::params::protocol
+  $my_class          = params_lookup( 'my_class' , { 'default' => '' } ),
+  $source            = params_lookup( 'source' , { 'default' => '' } ),
+  $source_dir        = params_lookup( 'source_dir' , { 'default' => '' } ),
+  $source_dir_purge  = params_lookup( 'source_dir_purge' , { 'default' => false } ),
+  $template          = params_lookup( 'template' , { 'default' => '' } ),
+  $options           = params_lookup( 'options' , { 'default' => '' } ),
+  $absent            = params_lookup( 'absent' , { 'default' => false } ),
+  $disable           = params_lookup( 'disable' , { 'default' => false } ),
+  $disableboot       = params_lookup( 'disableboot' , { 'default' => false } ),
+  $monitor           = params_lookup( 'monitor' , { 'default' => false , 'abs_lookup' => true } ),
+  $monitor_tool      = params_lookup( 'monitor_tool' , { 'default' => '' , 'abs_lookup' => true } ),
+  $monitor_target    = params_lookup( 'monitor_target' , { 'default' => '0.0.0.0' , 'abs_lookup' => true} ),
+  $puppi             = params_lookup( 'puppi' , { 'default' => false , 'abs_lookup' => true } ),
+  $puppi_helper      = params_lookup( 'puppi_helper' , { 'default' => 'standard' , 'abs_lookup' => true } ),
+  $firewall          = params_lookup( 'firewall' , { 'default' => false , 'abs_lookup' => true } ),
+  $firewall_tool     = params_lookup( 'firewall_tool' , { 'default' => '' , 'abs_lookup' => true } ),
+  $firewall_src      = params_lookup( 'firewall_src' , { 'default' => "0.0.0.0/0" , 'abs_lookup' => true } ),
+  $firewall_dst      = params_lookup( 'firewall_dst' , { 'default' => "$::ipaddress" , 'abs_lookup' => true } ),
+  $debug             = params_lookup( 'debug' , { 'default' => false , 'abs_lookup' => true } ),
+  $audit_only        = params_lookup( 'audit_only' , { 'default' => false , 'abs_lookup' => true } ),
+  $package           = params_lookup( 'package' ),
+  $service           = params_lookup( 'service' ),
+  $service_status    = params_lookup( 'service_status' ),
+  $process           = params_lookup( 'process' ),
+  $process_args      = params_lookup( 'process_args' ),
+  $process_user      = params_lookup( 'process_user' ),
+  $config_dir        = params_lookup( 'config_dir' ),
+  $config_file       = params_lookup( 'config_file' ),
+  $config_file_mode  = params_lookup( 'config_file_mode' ),
+  $config_file_owner = params_lookup( 'config_file_owner' ),
+  $config_file_group = params_lookup( 'config_file_group' ),
+  $config_file_init  = params_lookup( 'config_file_init' ),
+  $pid_file          = params_lookup( 'pid_file' ),
+  $data_dir          = params_lookup( 'data_dir' ),
+  $log_dir           = params_lookup( 'log_dir' ),
+  $log_file          = params_lookup( 'log_file' ),
+  $port              = params_lookup( 'port' ),
+  $protocol          = params_lookup( 'protocol' )
   ) inherits openssh::params {
 
   $bool_source_dir_purge=any2bool($source_dir_purge)
@@ -369,7 +373,7 @@ class openssh (
     monitor::port { "openssh_${openssh::protocol}_${openssh::port}":
       protocol => $openssh::protocol,
       port     => $openssh::port,
-      target   => $openssh::params::monitor_target,
+      target   => $openssh::monitor_target,
       tool     => $openssh::monitor_tool,
       enable   => $openssh::manage_monitor,
     }
@@ -377,6 +381,8 @@ class openssh (
       process  => $openssh::process,
       service  => $openssh::service,
       pidfile  => $openssh::pid_file,
+      user     => $openssh::process_user,
+      argument => $openssh::process_args,
       tool     => $openssh::monitor_tool,
       enable   => $openssh::manage_monitor,
     }
