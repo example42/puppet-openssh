@@ -83,15 +83,31 @@ class openssh::params {
     default                   => '/var/log/messages',
   }
 
-  $port = $::openssh_port ? {
-    ''      => '22',                    # Default value
-    default => $::openssh_port,
-  }
+  $port = '22'
+  $protocol = 'tcp'
 
-  $protocol = $::openssh_protocol ? {
-    ''      => 'tcp',                   # Default value
-    default => $::openssh_protocol,
-  }
+  # General Settings
+  $my_class = ''
+  $source = ''
+  $source_dir = ''
+  $source_dir_purge = ''
+  $template = ''
+  $options = ''
+  $absent = false
+  $disable = false
+  $disableboot = false
 
+  ### General module variables that can have a site or per module default
+  $monitor = false
+  $monitor_tool = ''
+  $monitor_target = $::ipaddress
+  $firewall = false
+  $firewall_tool = ''
+  $firewall_src = '0.0.0.0/0'
+  $firewall_dst = $::ipaddress
+  $puppi = false
+  $puppi_helper = 'standard'
+  $debug = false
+  $audit_only = false
 
 }
