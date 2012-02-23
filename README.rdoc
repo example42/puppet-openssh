@@ -2,56 +2,20 @@
 
 This is a Puppet openssh module from the second generation of Example42 Puppet Modules.
 
-Made by Alessandro Franceschi / Lab42 - http://www.example42.com
+Made by Alessandro Franceschi / Lab42
+
+Official site: http://www.example42.com
+
+Official git repository: http://github.com/example42/puppet-openssh
 
 Released under the terms of Apache 2 License.
 
-Check Modulefile for dependencies.
+This module requires functions provided by the Example42 Puppi module.
 
-== GENERAL USAGE
-This module can be used in 2 ways:
-
-* With the old style "Set variables and include class" pattern:
-
-        $openssh_template = "example42/openssh/openssh.conf.erb"
-        include openssh
-
-* As a parametrized class:
-
-        class { "openssh":
-          template => "example42/openssh/openssh.conf.erb",
-        }
-
-You can even, under some degrees, mix these two patterns.
-
-You can for example set general top scope variables that affect all your parametrized classes:
-
-        $puppi = true
-        $monitor = true
-        $monitor_tool = [ "nagios" , "munin" , "puppi" ]
-        class { "openssh":
-          template => "example42/openssh/openssh.conf.erb",
-        }
-        
-The above example has the same effect of:
-
-        class { "openssh":
-          template     => "example42/openssh/openssh.conf.erb",
-          puppi        => true,
-          monitor      => true,
-          monitor_tool => [ "nagios" , "munin" , "puppi" ],
-        }
-
-Note that if you use the "Set variables and include class" pattern you can define variables only
-at the top level scope or in a ENC (External Node Classifer) like Puppet Dashboard, Puppet Enterprise Console or The Foreman.
-
-Below you have an overview of the most important module's parameters (you can mix and aggregate them).
-
-The examples use parametrized classes, but for all the parameters you can set a $openssh_ top scope variable.
-
-For example, the variable "$openssh_absent" is equivant to the "absent =>" parameter.
+For detailed info about the logic and usage patterns of Example42 modules read README.usage on Example42 main modules set.
 
 == USAGE - Basic management
+
 * Install openssh with default settings
 
         class { "openssh": }
@@ -153,6 +117,4 @@ For example, the variable "$openssh_absent" is equivant to the "absent =>" param
           firewall_src  => "10.42.0.0/24",
           firewall_dst  => "$ipaddress_eth0",
         }
-
-# :include:../README.usage
 
