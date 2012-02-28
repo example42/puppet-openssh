@@ -40,6 +40,11 @@
 #   An hash of custom options to be used in templates for arbitrary settings.
 #   Can be defined also by the (top scope) variable $openssh_options
 #
+# [*service_autorestart*]
+#   Automatically restarts the openssh service when there is a change in
+#   configuration files. Default: true, Set to false if you don't want to
+#   automatically restart the service.
+#
 # [*absent*]
 #   Set to 'true' to remove package(s) installed by module
 #   Can be defined also by the (top scope) variable $openssh_absent
@@ -194,47 +199,49 @@
 #   Alessandro Franceschi <al@lab42.it/>
 #
 class openssh (
-  $my_class          = params_lookup( 'my_class' ),
-  $source            = params_lookup( 'source' ),
-  $source_dir        = params_lookup( 'source_dir' ),
-  $source_dir_purge  = params_lookup( 'source_dir_purge' ),
-  $template          = params_lookup( 'template' ), 
-  $options           = params_lookup( 'options' ),
-  $absent            = params_lookup( 'absent' ),
-  $disable           = params_lookup( 'disable' ),
-  $disableboot       = params_lookup( 'disableboot' ),
-  $monitor           = params_lookup( 'monitor' , 'global' ),
-  $monitor_tool      = params_lookup( 'monitor_tool' , 'global' ),
-  $monitor_target    = params_lookup( 'monitor_target' , 'global' ),
-  $puppi             = params_lookup( 'puppi' , 'global' ),
-  $puppi_helper      = params_lookup( 'puppi_helper' , 'global' ),
-  $firewall          = params_lookup( 'firewall' , 'global' ),
-  $firewall_tool     = params_lookup( 'firewall_tool' , 'global' ),
-  $firewall_src      = params_lookup( 'firewall_src' , 'global' ),
-  $firewall_dst      = params_lookup( 'firewall_dst' , 'global' ),
-  $debug             = params_lookup( 'debug' , 'global' ),
-  $audit_only        = params_lookup( 'audit_only' , 'global' ),
-  $package           = params_lookup( 'package' ),
-  $service           = params_lookup( 'service' ),
-  $service_status    = params_lookup( 'service_status' ),
-  $process           = params_lookup( 'process' ),
-  $process_args      = params_lookup( 'process_args' ),
-  $process_user      = params_lookup( 'process_user' ),
-  $config_dir        = params_lookup( 'config_dir' ),
-  $config_file       = params_lookup( 'config_file' ),
-  $config_file_mode  = params_lookup( 'config_file_mode' ),
-  $config_file_owner = params_lookup( 'config_file_owner' ),
-  $config_file_group = params_lookup( 'config_file_group' ),
-  $config_file_init  = params_lookup( 'config_file_init' ),
-  $pid_file          = params_lookup( 'pid_file' ),
-  $data_dir          = params_lookup( 'data_dir' ),
-  $log_dir           = params_lookup( 'log_dir' ),
-  $log_file          = params_lookup( 'log_file' ),
-  $port              = params_lookup( 'port' ),
-  $protocol          = params_lookup( 'protocol' )
+  $my_class            = params_lookup( 'my_class' ),
+  $source              = params_lookup( 'source' ),
+  $source_dir          = params_lookup( 'source_dir' ),
+  $source_dir_purge    = params_lookup( 'source_dir_purge' ),
+  $template            = params_lookup( 'template' ),
+  $service_autorestart = params_lookup( 'service_autorestart' , 'global' ),
+  $options             = params_lookup( 'options' ),
+  $absent              = params_lookup( 'absent' ),
+  $disable             = params_lookup( 'disable' ),
+  $disableboot         = params_lookup( 'disableboot' ),
+  $monitor             = params_lookup( 'monitor' , 'global' ),
+  $monitor_tool        = params_lookup( 'monitor_tool' , 'global' ),
+  $monitor_target      = params_lookup( 'monitor_target' , 'global' ),
+  $puppi               = params_lookup( 'puppi' , 'global' ),
+  $puppi_helper        = params_lookup( 'puppi_helper' , 'global' ),
+  $firewall            = params_lookup( 'firewall' , 'global' ),
+  $firewall_tool       = params_lookup( 'firewall_tool' , 'global' ),
+  $firewall_src        = params_lookup( 'firewall_src' , 'global' ),
+  $firewall_dst        = params_lookup( 'firewall_dst' , 'global' ),
+  $debug               = params_lookup( 'debug' , 'global' ),
+  $audit_only          = params_lookup( 'audit_only' , 'global' ),
+  $package             = params_lookup( 'package' ),
+  $service             = params_lookup( 'service' ),
+  $service_status      = params_lookup( 'service_status' ),
+  $process             = params_lookup( 'process' ),
+  $process_args        = params_lookup( 'process_args' ),
+  $process_user        = params_lookup( 'process_user' ),
+  $config_dir          = params_lookup( 'config_dir' ),
+  $config_file         = params_lookup( 'config_file' ),
+  $config_file_mode    = params_lookup( 'config_file_mode' ),
+  $config_file_owner   = params_lookup( 'config_file_owner' ),
+  $config_file_group   = params_lookup( 'config_file_group' ),
+  $config_file_init    = params_lookup( 'config_file_init' ),
+  $pid_file            = params_lookup( 'pid_file' ),
+  $data_dir            = params_lookup( 'data_dir' ),
+  $log_dir             = params_lookup( 'log_dir' ),
+  $log_file            = params_lookup( 'log_file' ),
+  $port                = params_lookup( 'port' ),
+  $protocol            = params_lookup( 'protocol' )
   ) inherits openssh::params {
 
   $bool_source_dir_purge=any2bool($source_dir_purge)
+  $bool_service_autorestart=any2bool($service_autorestart)
   $bool_absent=any2bool($absent)
   $bool_disable=any2bool($disable)
   $bool_disableboot=any2bool($disableboot)
@@ -267,6 +274,11 @@ class openssh (
       true    => 'stopped',
       default => 'running',
     },
+  }
+
+  $manage_service_autorestart = $openssh::bool_service_autorestart ? {
+    true    => 'Service[openssh]',
+    false   => undef,
   }
 
   $manage_file = $openssh::bool_absent ? {
@@ -319,7 +331,6 @@ class openssh (
     hasstatus  => $openssh::service_status,
     pattern    => $openssh::process,
     require    => Package['openssh'],
-    subscribe  => File['openssh.conf'],
   }
 
   file { 'openssh.conf':
@@ -329,7 +340,7 @@ class openssh (
     owner   => $openssh::config_file_owner,
     group   => $openssh::config_file_group,
     require => Package['openssh'],
-    notify  => Service['openssh'],
+    notify  => $openssh::manage_service_autorestart,
     source  => $openssh::manage_file_source,
     content => $openssh::manage_file_content,
     replace => $openssh::manage_file_replace,
@@ -341,10 +352,11 @@ class openssh (
     file { 'openssh.dir':
       ensure  => directory,
       path    => $openssh::config_dir,
-      require => Class['openssh::install'],
-      source  => $source_dir,
+      require => Package['openssh'],
+      notify  => $openssh::manage_service_autorestart,
+      source  => $openssh::source_dir,
       recurse => true,
-      purge   => $source_dir_purge,
+      purge   => $openssh::source_dir_purge,
       replace => $openssh::manage_file_replace,
       audit   => $openssh::manage_audit,
     }

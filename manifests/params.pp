@@ -93,6 +93,7 @@ class openssh::params {
   $source_dir_purge = ''
   $template = ''
   $options = ''
+  $service_autorestart = true
   $absent = false
   $disable = false
   $disableboot = false
