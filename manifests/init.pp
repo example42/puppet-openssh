@@ -404,8 +404,8 @@ class openssh (
   ### Firewall management, if enabled ( firewall => true )
   if $openssh::bool_firewall == true {
     firewall { "openssh_${openssh::protocol}_${openssh::port}":
-      source      => $openssh::firewall_source,
-      destination => $openssh::firewall_destination,
+      source      => $openssh::firewall_src,
+      destination => $openssh::firewall_dst,
       protocol    => $openssh::protocol,
       port        => $openssh::port,
       action      => 'allow',
