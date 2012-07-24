@@ -356,7 +356,7 @@ class openssh (
       notify  => $openssh::manage_service_autorestart,
       source  => $openssh::source_dir,
       recurse => true,
-      purge   => $openssh::source_dir_purge,
+      purge   => $openssh::bool_source_dir_purge,
       replace => $openssh::manage_file_replace,
       audit   => $openssh::manage_audit,
     }
