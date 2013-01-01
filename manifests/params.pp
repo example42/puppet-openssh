@@ -17,7 +17,8 @@ class openssh::params {
   ### Application related parameters
 
   $package = $::operatingsystem ? {
-    default => 'openssh-server',
+    /(?i:SLES|OpenSuSE)/ => 'openssh',
+    default              => 'openssh-server',
   }
 
   $service = $::operatingsystem ? {
@@ -50,7 +51,8 @@ class openssh::params {
   }
 
   $config_file_mode = $::operatingsystem ? {
-    default => '0600',
+    /(?i:SLES|OpenSuSE)/ => '0640',
+    default              => '0600',
   }
 
   $config_file_owner = $::operatingsystem ? {
