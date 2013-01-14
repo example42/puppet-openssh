@@ -66,14 +66,20 @@ For detailed info about the logic and usage patterns of Example42 modules read R
           template => "example42/openssh/openssh.conf.erb",      
         }
 
+* To manipulate options in your config using the options array you should use this syntax in your config
+        UsePAM <%= scope.function_options_lookup(['UsePAM','no']) %>
+        LogLevel <%= scope.function_options_lookup(['LogLevel','INFO']) %>
+        ListenAddress <%= scope.function_options_lookup(['ListenAddress', '0.0.0.0']) %>
+
 * Define custom options that can be used in a custom template without the
   need to add parameters to the openssh class
 
         class { "openssh":
           template => "example42/openssh/openssh.conf.erb",    
           options  => {
-            'LogLevel' => 'INFO',
-            'UsePAM'   => 'yes',
+            'LogLevel'      => 'INFO',
+            'UsePAM'        => 'yes',
+            'ListenAddress' => '0.0.0.0'
           },
         }
 
