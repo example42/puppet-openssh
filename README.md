@@ -124,3 +124,5 @@ For detailed info about the logic and usage patterns of Example42 modules read R
           firewall_dst  => "$ipaddress_eth0",
         }
 
+
+[![Build Status](https://travis-ci.org/example42/puppet-openssh.png?branch=master)](https://travis-ci.org/example42/puppet-openssh)
