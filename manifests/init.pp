@@ -371,6 +371,14 @@ class openssh (
       type         => 'ssh-rsa',
       key          => $::sshrsakey;
     }
+
+    # puppet creates this file with 0600, which is not very usable
+    file { "${openssh::config_dir}/ssh_known_hosts":
+      ensure  => present,
+      owner   => root,
+      mode    => 0644,
+      require => Package['openssh'];
+    }
   }
 
 
