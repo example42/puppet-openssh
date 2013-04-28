@@ -209,6 +209,7 @@ class openssh (
   $absent              = params_lookup( 'absent' ),
   $disable             = params_lookup( 'disable' ),
   $disableboot         = params_lookup( 'disableboot' ),
+  $exchange_hostkeys   = params_lookup( 'exchange_hostkeys' ),
   $monitor             = params_lookup( 'monitor' , 'global' ),
   $monitor_tool        = params_lookup( 'monitor_tool' , 'global' ),
   $monitor_target      = params_lookup( 'monitor_target' , 'global' ),
@@ -359,6 +360,16 @@ class openssh (
       purge   => $openssh::bool_source_dir_purge,
       replace => $openssh::manage_file_replace,
       audit   => $openssh::manage_audit,
+    }
+  }
+
+  if $openssh::exchange_hostkeys {
+    include openssh::hostkeys
+
+    @@sshkey { $::fqdn:
+      host_aliases => [$::ipaddress],
+      type         => 'ssh-rsa',
+      key          => $::sshrsakey;
     }
   }
 
