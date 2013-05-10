@@ -3,6 +3,7 @@
 # check arg0: dir for keys
 [ -z "$1" ] && echo "Please specify directory for key generation" && exit 1
 KEYSDIR="$1"
+COMMENT="$2"
 
 # set umask
 umask 0022
@@ -40,7 +41,7 @@ do_rsa1_keygen() {
   if [ ! -s $RSA1_KEY -a `fips_enabled` -eq 0 ]; then
     echo -n $"Generating SSH1 RSA host key: "
     rm -f $RSA1_KEY
-    if test ! -f $RSA1_KEY && $KEYGEN -q -t rsa1 -f $RSA1_KEY -C '' -N '' >&/dev/null; then
+    if test ! -f $RSA1_KEY && $KEYGEN -q -C "$COMMENT"  -t rsa1 -f $RSA1_KEY -N '' >&/dev/null; then
       chmod 600 $RSA1_KEY
       chmod 644 $RSA1_KEY.pub
       success $"RSA1 key generation"
@@ -57,7 +58,7 @@ do_rsa_keygen() {
   if [ ! -s $RSA_KEY ]; then
     echo -n $"Generating SSH2 RSA host key: "
     rm -f $RSA_KEY
-    if test ! -f $RSA_KEY && $KEYGEN -q -t rsa -f $RSA_KEY -C '' -N '' >&/dev/null; then
+    if test ! -f $RSA_KEY && $KEYGEN -q -C "$COMMENT" -t rsa -f $RSA_KEY -N '' >&/dev/null; then
       chmod 600 $RSA_KEY
       chmod 644 $RSA_KEY.pub
       success $"RSA key generation"
@@ -74,7 +75,7 @@ do_dsa_keygen() {
   if [ ! -s $DSA_KEY ]; then
     echo -n $"Generating SSH2 DSA host key: "
     rm -f $DSA_KEY
-    if test ! -f $DSA_KEY && $KEYGEN -q -t dsa -f $DSA_KEY -C '' -N '' >&/dev/null; then
+    if test ! -f $DSA_KEY && $KEYGEN -q -C "$COMMENT" -t dsa -f $DSA_KEY -N '' >&/dev/null; then
       chmod 600 $DSA_KEY
       chmod 644 $DSA_KEY.pub
       success $"DSA key generation"
