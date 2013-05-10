@@ -27,7 +27,7 @@
 #   path is specified a default of puppet:///private/ssh/$username will be used.
 #
 # [*comment*]
-#   Optional. The command to use for generating the keys.
+#   Optional. The comment to use when generating the keys.
 #   Defaults to $username@$::fqdn.
 #
 #
@@ -45,7 +45,7 @@ define openssh::key (
   } else {
     $def_username = $username
   }
-  
+
   if ($comment == null) {
     $def_comment = "${def_username}@${::fqdn}"
   } else {
@@ -91,8 +91,8 @@ define openssh::key (
       ensure  => file,
       owner   => $def_username,
       group   => $def_username,
-      mode    => '0644',
-      source  => "${def_source_dir}/ssh_host_dsa_key.pub",
+      mode    => '0600',
+      source  => "${def_source_dir}/ssh_host_dsa_key",
       require => File [ $def_dir ],
     }
 
@@ -109,7 +109,7 @@ define openssh::key (
       ensure  => file,
       owner   => $def_username,
       group   => $def_username,
-      mode    => '0644',
+      mode    => '0600',
       source  => "${def_source_dir}/ssh_host_key",
       require => File [ $def_dir ],
     }
@@ -127,7 +127,7 @@ define openssh::key (
       ensure  => file,
       owner   => $def_username,
       group   => $def_username,
-      mode    => '0644',
+      mode    => '0600',
       source  => "${def_source_dir}/ssh_host_rsa_key",
       require => File [ $def_dir ],
     }
