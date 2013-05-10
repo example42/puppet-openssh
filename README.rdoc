@@ -82,6 +82,12 @@ For detailed info about the logic and usage patterns of Example42 modules read R
         class { "openssh:"
           my_class => 'openssh::example42',
         }
+  
+== USAGE - Manage a user SSH keys:
+* Use all defaults and place in the user's home directory ssh keys that are
+  stored centrally on the puppet server.
+
+        openssh::key { 'username': }
 
 
 == USAGE - Example42 extensions management 
