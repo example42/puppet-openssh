@@ -81,7 +81,7 @@ define openssh::key (
   } else {
     $def_dir = $dir
   }
-  
+
   if ($naming_scheme == 'host') {
     $rsa1_key = 'ssh_host_key'
     $rsa_key  = 'ssh_host_rsa_key'
@@ -164,8 +164,6 @@ define openssh::key (
       require => File [ $def_dir ],
     }
 
-  } else {
-    raise Puppet::ParseError, "Could not generate SSH keys"
   }
 
 }
