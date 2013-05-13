@@ -2,8 +2,10 @@
 
 # check arg0: dir for keys
 [ -z "$1" ] && echo "Please specify directory for key generation" && exit 1
+[ -z "$2" ] && echo "Please specify a naming scheme ('user' or 'host')" && exit 1
 KEYSDIR="$1"
-COMMENT="$2"
+NAMING_SCHEME="$2"
+COMMENT="$3"
 
 # set umask
 umask 0022
@@ -17,9 +19,16 @@ umask 0022
 
 # Some functions to make the below more readable
 KEYGEN=/usr/bin/ssh-keygen
-RSA1_KEY=$1/ssh_host_key
-RSA_KEY=$1/ssh_host_rsa_key
-DSA_KEY=$1/ssh_host_dsa_key
+if [ $NAMING_SCHEME == 'host' ]; then
+	RSA1_KEY=$1/ssh_host_key
+	RSA_KEY=$1/ssh_host_rsa_key
+	DSA_KEY=$1/ssh_host_dsa_key
+else
+	RSA1_KEY=$1/identity
+	RSA_KEY=$1/id_rsa
+	DSA_KEY=$1/id_dsa
+fi
+
 
 success() {
 	echo Successful  $1

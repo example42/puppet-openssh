@@ -30,13 +30,25 @@
 #   Optional. The comment to use when generating the keys.
 #   Defaults to $username@$::fqdn.
 #
+# [*naming_scheme*]
+#   Optional. Must be either 'user' or 'scheme'. User a naming scheme for either
+#   user keys or host keys.
+#
+# [*file_perms_priv*]
+#   File permisions for private keys. Defaults to 0600.
+#
+# [*file_perms_pub*]
+#   File permissions for public keys. Defaults to 0644.
 #
 define openssh::key (
-  $username    = null,
-  $dir         = null,
-  $server_path = null,
-  $source_dir  = null,
-  $comment     = null,
+  $username        = null,
+  $dir             = null,
+  $server_path     = null,
+  $source_dir      = null,
+  $comment         = null,
+  $naming_scheme   = 'user',
+  $file_perms_priv = 0600,
+  $file_perms_pub  = 0644,
 ) {
 
   /* Determine values to work with. Use sane defaults if necessary */
@@ -69,6 +81,16 @@ define openssh::key (
   } else {
     $def_dir = $dir
   }
+  
+  if ($naming_scheme == 'host') {
+    $rsa1_key = 'ssh_host_key'
+    $rsa_key  = 'ssh_host_rsa_key'
+    $dsa_key  = 'ssh_host_dsa_key'
+  } else {
+    $rsa1_key = 'identity'
+    $rsa_key  = 'id_rsa'
+    $dsa_key  = 'id_dsa'
+  }
 
 
   /* Generate the keys on the server side, and ship them to the client. */
@@ -77,6 +99,7 @@ define openssh::key (
   if generate(
       "${module_dir}/scripts/generate_keys.sh",
       $def_server_path,
+      $naming_scheme,
       $def_comment
   ) {
 
@@ -87,60 +110,62 @@ define openssh::key (
       require  => User[ $def_username ],
     }
 
-    file { "${def_dir}/ssh_host_dsa_key":
+    file { "${def_dir}/${dsa_key}":
       ensure  => file,
       owner   => $def_username,
       group   => $def_username,
-      mode    => '0600',
-      source  => "${def_source_dir}/ssh_host_dsa_key",
+      mode    => $file_perms_priv,
+      source  => "${def_source_dir}/${dsa_key}",
       require => File [ $def_dir ],
     }
 
-    file { "${def_dir}/ssh_host_dsa_key.pub":
+    file { "${def_dir}/${dsa_key}.pub":
       ensure  => file,
       owner   => $def_username,
       group   => $def_username,
-      mode    => '0644',
-      source  => "${def_source_dir}/ssh_host_dsa_key.pub",
+      mode    => $file_perms_pub,
+      source  => "${def_source_dir}/${dsa_key}.pub",
       require => File [ $def_dir ],
     }
 
-    file { "${def_dir}/ssh_host_key":
+    file { "${def_dir}/${rsa1_key}":
       ensure  => file,
       owner   => $def_username,
       group   => $def_username,
-      mode    => '0600',
-      source  => "${def_source_dir}/ssh_host_key",
+      mode    => $file_perms_priv,
+      source  => "${def_source_dir}/${rsa1_key}",
       require => File [ $def_dir ],
     }
 
-    file { "${def_dir}/ssh_host_key.pub":
+    file { "${def_dir}/${rsa1_key}.pub":
       ensure  => file,
       owner   => $def_username,
       group   => $def_username,
-      mode    => '0644',
-      source  => "${def_source_dir}/ssh_host_key.pub",
+      mode    => $file_perms_pub,
+      source  => "${def_source_dir}/${rsa1_key}.pub",
       require => File [ $def_dir ],
     }
 
-    file { "${def_dir}/ssh_host_rsa_key":
+    file { "${def_dir}/${rsa_key}":
       ensure  => file,
       owner   => $def_username,
       group   => $def_username,
-      mode    => '0600',
-      source  => "${def_source_dir}/ssh_host_rsa_key",
+      mode    => $file_perms_priv,
+      source  => "${def_source_dir}/${rsa_key}",
       require => File [ $def_dir ],
     }
 
-    file { "${def_dir}/ssh_host_rsa_key.pub":
+    file { "${def_dir}/${rsa_key}.pub":
       ensure  => file,
       owner   => $def_username,
       group   => $def_username,
-      mode    => '0644',
-      source  => "${def_source_dir}/ssh_host_rsa_key.pub",
+      mode    => $file_perms_pub,
+      source  => "${def_source_dir}/${rsa_key}.pub",
       require => File [ $def_dir ],
     }
 
+  } else {
+    raise Puppet::ParseError, "Could not generate SSH keys"
   }
 
 }
