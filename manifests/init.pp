@@ -408,6 +408,10 @@ class openssh (
       mode    => '0644',
       require => $require_package;
     }
+
+    resources { 'sshkey':
+      purge => true;
+    }
   }
 
 
