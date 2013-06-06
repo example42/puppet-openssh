@@ -386,7 +386,19 @@ class openssh (
     @@sshkey { $ssh_key_fqdn:
       host_aliases => [ $ssh_key_address ],
       type         => 'ssh-rsa',
-      key          => $::sshrsakey;
+      key          => $::sshrsakey,
+      tag          => [ "openssh::hostkeys" ];
+    }
+
+    $ssh_key_name = $port ? {
+      22 => $::hostname,
+      default => "[${::hostname}]:$port",
+    }
+
+    @@sshkey { $ssh_key_name:
+      type => 'ssh-rsa',
+      key  => $::sshrsakey,
+      tag  => [ "openssh::hostkeys::${::domainname}" ];
     }
 
     # puppet creates this file with 0600, which is not very usable
