@@ -258,6 +258,11 @@ class openssh (
     false => 'present',
   }
 
+  $require_package = $openssh::package ? {
+    ''      => undef,
+    default => Package['openssh'],
+  }
+
   $manage_service_enable = $openssh::bool_disableboot ? {
     true    => false,
     default => $openssh::bool_disable ? {
@@ -320,9 +325,11 @@ class openssh (
   }
 
   ### Managed resources
-  package { 'openssh':
-    ensure => $openssh::manage_package,
-    name   => $openssh::package,
+  if $openssh::package {
+    package { 'openssh':
+      ensure => $openssh::manage_package,
+      name   => $openssh::package,
+    }
   }
 
   service { 'openssh':
@@ -331,7 +338,7 @@ class openssh (
     enable     => $openssh::manage_service_enable,
     hasstatus  => $openssh::service_status,
     pattern    => $openssh::process,
-    require    => Package['openssh'],
+    require    => $require_package,
   }
 
   file { 'openssh.conf':
@@ -340,7 +347,7 @@ class openssh (
     mode    => $openssh::config_file_mode,
     owner   => $openssh::config_file_owner,
     group   => $openssh::config_file_group,
-    require => Package['openssh'],
+    require => $require_package,
     notify  => $openssh::manage_service_autorestart,
     source  => $openssh::manage_file_source,
     content => $openssh::manage_file_content,
@@ -353,7 +360,7 @@ class openssh (
     file { 'openssh.dir':
       ensure  => directory,
       path    => $openssh::config_dir,
-      require => Package['openssh'],
+      require => $require_package,
       notify  => $openssh::manage_service_autorestart,
       source  => $openssh::source_dir,
       recurse => true,
@@ -377,7 +384,7 @@ class openssh (
       ensure  => present,
       owner   => root,
       mode    => 0644,
-      require => Package['openssh'];
+      require => $require_package;
     }
   }
 
