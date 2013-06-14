@@ -18,6 +18,7 @@ class openssh::params {
 
   $package = $::operatingsystem ? {
     /(?i:SLES|OpenSuSE)/ => 'openssh',
+    /(?i:OpenBSD)/       => '',
     default              => 'openssh-server',
   }
 
@@ -52,6 +53,7 @@ class openssh::params {
 
   $config_file_mode = $::operatingsystem ? {
     /(?i:SLES|OpenSuSE)/ => '0640',
+    /(?i:OpenBSD)/       => '0644',
     default              => '0600',
   }
 
@@ -60,11 +62,13 @@ class openssh::params {
   }
 
   $config_file_group = $::operatingsystem ? {
-    default => 'root',
+    /(?i:OpenBSD)/ => 'wheel',
+    default        => 'root',
   }
 
   $config_file_init = $::operatingsystem ? {
     /(?i:Debian|Ubuntu|Mint)/ => '/etc/default/ssh',
+    /(?i:OpenBSD)/            => '',
     default                   => '/etc/sysconfig/sshd',
   }
 
@@ -82,6 +86,7 @@ class openssh::params {
 
   $log_file = $::operatingsystem ? {
     /(?i:Debian|Ubuntu|Mint)/ => '/var/log/syslog',
+    /(?i:OpenBSD)/            => '/var/log/authlog',
     default                   => '/var/log/messages',
   }
 
