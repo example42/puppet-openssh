@@ -383,7 +383,7 @@ class openssh (
     file { "${openssh::config_dir}/ssh_known_hosts":
       ensure  => present,
       owner   => root,
-      mode    => 0644,
+      mode    => '0644',
       require => $require_package;
     }
   }
