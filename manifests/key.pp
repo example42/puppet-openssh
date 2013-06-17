@@ -51,7 +51,7 @@ define openssh::key (
   $file_perms_pub  = 0644,
 ) {
 
-  /* Determine values to work with. Use sane defaults if necessary */
+  # Determine values to work with. Use sane defaults if necessary
   if($username == null) {
     $def_username = $name
   } else {
@@ -71,7 +71,7 @@ define openssh::key (
   }
 
   if ($server_path == null) {
-     $def_server_path = "/etc/puppet/files/private/${::fqdn}/ssh/${def_username}"
+    $def_server_path = "/etc/puppet/files/private/${::fqdn}/ssh/${def_username}"
   } else {
     $def_server_path = $server_path
   }
@@ -93,7 +93,7 @@ define openssh::key (
   }
 
 
-  /* Generate the keys on the server side, and ship them to the client. */
+  # Generate the keys on the server side, and ship them to the client.
 
   $module_dir = get_module_path('openssh')
   if generate(
