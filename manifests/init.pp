@@ -373,10 +373,32 @@ class openssh (
   if $openssh::exchange_hostkeys {
     include openssh::hostkeys
 
-    @@sshkey { $::fqdn:
-      host_aliases => [$::ipaddress],
+    $ssh_key_fqdn = $port ? {
+      22 => $::fqdn,
+      default => "[${::fqdn}]:$port",
+    }
+
+    $ssh_key_address = $port ? {
+      22 => $::ipaddress,
+      default => "[${::ipaddress}]:$port",
+    }
+
+    @@sshkey { $ssh_key_fqdn:
+      host_aliases => [ $ssh_key_address ],
       type         => 'ssh-rsa',
-      key          => $::sshrsakey;
+      key          => $::sshrsakey,
+      tag          => [ "openssh::hostkeys" ];
+    }
+
+    $ssh_key_name = $port ? {
+      22 => $::hostname,
+      default => "[${::hostname}]:$port",
+    }
+
+    @@sshkey { $ssh_key_name:
+      type => 'ssh-rsa',
+      key  => $::sshrsakey,
+      tag  => [ "openssh::hostkeys::${::domainname}" ];
     }
 
     # puppet creates this file with 0600, which is not very usable
@@ -385,6 +407,10 @@ class openssh (
       owner   => root,
       mode    => '0644',
       require => $require_package;
+    }
+
+    resources { 'sshkey':
+      purge => true;
     }
   }
 
