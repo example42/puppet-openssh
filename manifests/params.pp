@@ -52,9 +52,10 @@ class openssh::params {
   }
 
   $config_file_mode = $::operatingsystem ? {
-    /(?i:SLES|OpenSuSE)/ => '0640',
-    /(?i:OpenBSD)/       => '0644',
-    default              => '0600',
+    /(?i:SLES|OpenSuSE)/      => '0640',
+    /(?i:OpenBSD)/            => '0644',
+    /(?i:Debian|Ubuntu|Mint)/ => '0644',
+    default                   => '0600',
   }
 
   $config_file_owner = $::operatingsystem ? {
