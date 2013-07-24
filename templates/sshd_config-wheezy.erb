@@ -5,7 +5,7 @@
 Port <%= scope.lookupvar('openssh::port') %>
 # Use these options to restrict which interfaces/protocols sshd will bind to
 #ListenAddress ::
-#ListenAddress 0.0.0.0
+ListenAddress <%= scope.function_options_lookup(['ListenAddress','0.0.0.0']) %>
 Protocol 2
 # HostKeys for protocol version 2
 HostKey /etc/ssh/ssh_host_rsa_key
@@ -20,11 +20,11 @@ ServerKeyBits 768
 
 # Logging
 SyslogFacility AUTH
-LogLevel INFO
+LogLevel <%= scope.function_options_lookup(['LogLevel','INFO']) %>
 
 # Authentication:
 LoginGraceTime 120
-PermitRootLogin yes
+PermitRootLogin <%= scope.function_options_lookup(['PermitRootLogin','yes']) %>
 StrictModes yes
 
 RSAAuthentication yes
@@ -84,4 +84,17 @@ Subsystem sftp /usr/lib/openssh/sftp-server
 # If you just want the PAM account and session checks to run without
 # PAM authentication, then enable this but set PasswordAuthentication
 # and ChallengeResponseAuthentication to 'no'.
-UsePAM yes
+UsePAM <%= scope.function_options_lookup(['UsePAM','yes']) %>
+
+<%- if scope.function_options_lookup(['DenyUsers','']) != '' -%>
+DenyUsers <%= scope.function_options_lookup(['DenyUsers','']) %>
+<%- end -%>
+<%- if scope.function_options_lookup(['AllowUsers','']) != '' -%>
+AllowUsers <%= scope.function_options_lookup(['AllowUsers','']) %>
+<%- end -%>
+<%- if scope.function_options_lookup(['DenyGroups','']) != '' -%>
+DenyGroups <%= scope.function_options_lookup(['DenyGroups','']) %>
+<%- end -%>
+<%- if scope.function_options_lookup(['AllowGroups','']) != '' -%>
+AllowGroups <%= scope.function_options_lookup(['AllowGroups','']) %>
+<%- end -%>
