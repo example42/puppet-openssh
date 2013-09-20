@@ -292,7 +292,10 @@ class openssh (
     default => 'present',
   }
 
-  if $openssh::bool_absent == true or $openssh::bool_disable == true or $openssh::bool_disableboot == true {
+  if $openssh::bool_absent == true
+  or $openssh::bool_disable == true
+  or $openssh::bool_monitor == false
+  or $openssh::bool_disableboot == true {
     $manage_monitor = false
   } else {
     $manage_monitor = true
@@ -433,7 +436,7 @@ class openssh (
 
 
   ### Service monitoring, if enabled ( monitor => true )
-  if $openssh::bool_monitor == true {
+  if $openssh::monitor_tool {
     monitor::port { "openssh_${openssh::protocol}_${openssh::port}":
       protocol => $openssh::protocol,
       port     => $openssh::port,
