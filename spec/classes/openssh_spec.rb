@@ -14,7 +14,7 @@ describe 'openssh' do
   end
 
   describe 'Test standard installation with monitoring and firewalling' do
-    let(:params) { {:monitor => true , :firewall => true, :port => '42' } }
+    let(:params) { {:monitor => true , :monitor_tool => 'puppi' , :firewall => true, :port => '42' } }
 
     it { should contain_package('openssh').with_ensure('present') }
     it { should contain_service('openssh').with_ensure('running') }
@@ -31,7 +31,7 @@ describe 'openssh' do
   end
 
   describe 'Test decommissioning - absent' do
-    let(:params) { {:absent => true, :monitor => true , :firewall => true, :port => '42'} }
+    let(:params) { {:absent => true, :monitor => true , :monitor_tool => 'puppi' , :firewall => true, :port => '42'} }
 
     it 'should remove Package[openssh]' do should contain_package('openssh').with_ensure('absent') end 
     it 'should stop Service[openssh]' do should contain_service('openssh').with_ensure('stopped') end
@@ -48,7 +48,7 @@ describe 'openssh' do
   end
 
   describe 'Test decommissioning - disable' do
-    let(:params) { {:disable => true, :monitor => true , :firewall => true, :port => '42'} }
+    let(:params) { {:disable => true, :monitor => true , :monitor_tool => 'puppi' , :firewall => true, :port => '42'} }
 
     it { should contain_package('openssh').with_ensure('present') }
     it 'should stop Service[openssh]' do should contain_service('openssh').with_ensure('stopped') end
@@ -65,7 +65,7 @@ describe 'openssh' do
   end
 
   describe 'Test decommissioning - disableboot' do
-    let(:params) { {:disableboot => true, :monitor => true , :firewall => true, :port => '42'} }
+    let(:params) { {:disableboot => true, :monitor => true , :monitor_tool => 'puppi' , :firewall => true, :port => '42'} }
   
     it { should contain_package('openssh').with_ensure('present') }
     it { should_not contain_service('openssh').with_ensure('present') }
@@ -182,7 +182,7 @@ describe 'openssh' do
   end
 
   describe 'Test params lookup' do
-    let(:facts) { { :monitor => true , :ipaddress => '10.42.42.42' } }
+    let(:facts) { { :monitor => true , :monitor_tool => 'puppi' , :ipaddress => '10.42.42.42' } }
     let(:params) { { :port => '42' } }
 
     it 'should honour top scope global vars' do
@@ -192,7 +192,7 @@ describe 'openssh' do
   end
 
   describe 'Test params lookup' do
-    let(:facts) { { :openssh_monitor => true , :ipaddress => '10.42.42.42' } }
+    let(:facts) { { :openssh_monitor => true , :monitor_tool => 'puppi' , :ipaddress => '10.42.42.42' } }
     let(:params) { { :port => '42' } }
 
     it 'should honour module specific vars' do
@@ -202,7 +202,7 @@ describe 'openssh' do
   end
 
   describe 'Test params lookup' do
-    let(:facts) { { :monitor => false , :openssh_monitor => true , :ipaddress => '10.42.42.42' } }
+    let(:facts) { { :monitor => false , :openssh_monitor => true , :monitor_tool => 'puppi' , :ipaddress => '10.42.42.42' } }
     let(:params) { { :port => '42' } }
 
     it 'should honour top scope module specific over global vars' do
@@ -213,7 +213,7 @@ describe 'openssh' do
 
   describe 'Test params lookup' do
     let(:facts) { { :monitor => false , :ipaddress => '10.42.42.42' } }
-    let(:params) { { :monitor => true , :firewall => true, :port => '42' } }
+    let(:params) { { :monitor => true , :monitor_tool => 'puppi' , :firewall => true, :port => '42' } }
 
     it 'should honour passed params over global vars' do
       content = catalogue.resource('monitor::process', 'openssh_process').send(:parameters)[:enable]
