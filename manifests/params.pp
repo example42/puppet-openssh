@@ -19,11 +19,13 @@ class openssh::params {
   $package = $::operatingsystem ? {
     /(?i:SLES|OpenSuSE)/ => 'openssh',
     /(?i:OpenBSD)/       => '',
+    /(?i:Solaris)/       => '',
     default              => 'openssh-server',
   }
 
   $service = $::operatingsystem ? {
     /(?i:Debian|Ubuntu|Mint)/ => 'ssh',
+    /(?i:Solaris)/            => 'ssh',
     default                   => 'sshd',
   }
 
@@ -70,6 +72,7 @@ class openssh::params {
   $config_file_init = $::operatingsystem ? {
     /(?i:Debian|Ubuntu|Mint)/ => '/etc/default/ssh',
     /(?i:OpenBSD)/            => '',
+    /(?i:Solaris)/            => '',
     default                   => '/etc/sysconfig/sshd',
   }
 
@@ -88,6 +91,7 @@ class openssh::params {
   $log_file = $::operatingsystem ? {
     /(?i:Debian|Ubuntu|Mint)/ => '/var/log/syslog',
     /(?i:OpenBSD)/            => '/var/log/authlog',
+    /(?i:Solaris)/            => '/var/adm/authlog',
     default                   => '/var/log/messages',
   }
 
