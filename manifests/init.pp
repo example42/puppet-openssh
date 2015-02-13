@@ -328,7 +328,7 @@ class openssh (
   }
 
   ### Managed resources
-  if $openssh::package {
+  if $openssh::package and $openssh::package != '' {
     package { 'openssh':
       ensure => $openssh::manage_package,
       name   => $openssh::package,
@@ -359,7 +359,7 @@ class openssh (
   }
 
   # The whole openssh configuration directory can be recursively overriden
-  if $openssh::source_dir {
+  if $openssh::source_dir and $openssh::source_dir != '' {
     file { 'openssh.dir':
       ensure  => directory,
       path    => $openssh::config_dir,
@@ -373,7 +373,7 @@ class openssh (
     }
   }
 
-  if $openssh::exchange_hostkeys {
+  if $openssh::exchange_hostkeys and $openssh::exchange_hostkeys != '' {
     include openssh::hostkeys
 
     $ssh_key_fqdn = $port ? {
@@ -419,7 +419,7 @@ class openssh (
 
 
   ### Include custom class if $my_class is set
-  if $openssh::my_class {
+  if $openssh::my_class and $openssh::my_class != '' {
     include $openssh::my_class
   }
 
@@ -436,7 +436,7 @@ class openssh (
 
 
   ### Service monitoring, if enabled ( monitor => true )
-  if $openssh::monitor_tool {
+  if $openssh::monitor_tool and $openssh::monitor_tool != '' {
     monitor::port { "openssh_${openssh::protocol}_${openssh::port}":
       protocol => $openssh::protocol,
       port     => $openssh::port,
