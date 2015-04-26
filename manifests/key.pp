@@ -104,10 +104,10 @@ define openssh::key (
   ) {
 
     file { $def_dir:
-      ensure   => directory,
-      owner    => $def_username,
-      group    => $def_username,
-      require  => User[ $def_username ],
+      ensure  => directory,
+      owner   => $def_username,
+      group   => $def_username,
+      require => User[ $def_username ],
     }
 
     file { "${def_dir}/${dsa_key}":

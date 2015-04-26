@@ -336,12 +336,12 @@ class openssh (
   }
 
   service { 'openssh':
-    ensure     => $openssh::manage_service_ensure,
-    name       => $openssh::service,
-    enable     => $openssh::manage_service_enable,
-    hasstatus  => $openssh::service_status,
-    pattern    => $openssh::process,
-    require    => $require_package,
+    ensure    => $openssh::manage_service_ensure,
+    name      => $openssh::service,
+    enable    => $openssh::manage_service_enable,
+    hasstatus => $openssh::service_status,
+    pattern   => $openssh::process,
+    require   => $require_package,
   }
 
   file { 'openssh.conf':
@@ -378,24 +378,24 @@ class openssh (
 
     $ssh_key_fqdn = $port ? {
       22 => $::fqdn,
-      default => "[${::fqdn}]:$port",
+      default => "[${::fqdn}]:${port}",
     }
 
     $ssh_key_address = $port ? {
       22 => $::ipaddress,
-      default => "[${::ipaddress}]:$port",
+      default => "[${::ipaddress}]:${port}",
     }
 
     @@sshkey { $ssh_key_fqdn:
       host_aliases => [ $ssh_key_address ],
       type         => 'ssh-rsa',
       key          => $::sshrsakey,
-      tag          => [ "openssh::hostkeys" ];
+      tag          => [ 'openssh::hostkeys' ];
     }
 
     $ssh_key_name = $port ? {
       22 => $::hostname,
-      default => "[${::hostname}]:$port",
+      default => "[${::hostname}]:${port}",
     }
 
     @@sshkey { $ssh_key_name:
