@@ -116,7 +116,7 @@ define openssh::key (
       group   => $def_username,
       mode    => $file_perms_priv,
       source  => "${def_source_dir}/${dsa_key}",
-      require => File [ $def_dir ],
+      require => File[ $def_dir ],
     }
 
     file { "${def_dir}/${dsa_key}.pub":
@@ -125,7 +125,7 @@ define openssh::key (
       group   => $def_username,
       mode    => $file_perms_pub,
       source  => "${def_source_dir}/${dsa_key}.pub",
-      require => File [ $def_dir ],
+      require => File[ $def_dir ],
     }
 
     file { "${def_dir}/${rsa1_key}":
@@ -134,7 +134,7 @@ define openssh::key (
       group   => $def_username,
       mode    => $file_perms_priv,
       source  => "${def_source_dir}/${rsa1_key}",
-      require => File [ $def_dir ],
+      require => File[ $def_dir ],
     }
 
     file { "${def_dir}/${rsa1_key}.pub":
@@ -143,7 +143,7 @@ define openssh::key (
       group   => $def_username,
       mode    => $file_perms_pub,
       source  => "${def_source_dir}/${rsa1_key}.pub",
-      require => File [ $def_dir ],
+      require => File[ $def_dir ],
     }
 
     file { "${def_dir}/${rsa_key}":
@@ -152,7 +152,7 @@ define openssh::key (
       group   => $def_username,
       mode    => $file_perms_priv,
       source  => "${def_source_dir}/${rsa_key}",
-      require => File [ $def_dir ],
+      require => File[ $def_dir ],
     }
 
     file { "${def_dir}/${rsa_key}.pub":
@@ -161,7 +161,7 @@ define openssh::key (
       group   => $def_username,
       mode    => $file_perms_pub,
       source  => "${def_source_dir}/${rsa_key}.pub",
-      require => File [ $def_dir ],
+      require => File[ $def_dir ],
     }
 
   }
